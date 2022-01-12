@@ -22,3 +22,14 @@ else
 	WHITE        := ""
 	RESET        := ""
 endif
+
+define print_colours
+	@echo "${BLACK}BLACK${RESET}"
+	@echo "${RED}RED${RESET}"
+	@echo "${GREEN}GREEN${RESET}"
+	@echo "${YELLOW}YELLOW${RESET}"
+	@echo "${LIGHTPURPLE}LIGHTPURPLE${RESET}"
+	@echo "${PURPLE}PURPLE${RESET}"
+	@echo "${BLUE}BLUE${RESET}"
+	@echo "${WHITE}WHITE${RESET}"
+endef
