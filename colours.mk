@@ -10,7 +10,10 @@ ifneq (,$(findstring xterm,${TERM}))
 	PURPLE       := $(shell tput -Txterm setaf 5)
 	BLUE         := $(shell tput -Txterm setaf 6)
 	WHITE        := $(shell tput -Txterm setaf 7)
+
+	# No-Color
 	RESET := $(shell tput -Txterm sgr0)
+	NC := $(shell tput -Txterm sgr0)
 else
 	BLACK        := ""
 	RED          := ""
@@ -20,7 +23,10 @@ else
 	PURPLE       := ""
 	BLUE         := ""
 	WHITE        := ""
+
+	# No-Color
 	RESET        := ""
+	NC           := ""
 endif
 
 define print_colours
