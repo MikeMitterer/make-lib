@@ -1,6 +1,8 @@
 # Define standard colors
 # Weitere Infos:
 #	https://gist.github.com/rsperl/d2dfe88a520968fbc1f49db0a29345b9
+#
+
 ifneq (,$(findstring xterm,${TERM}))
 	BLACK        := $(shell tput -Txterm setaf 0)
 	RED          := $(shell tput -Txterm setaf 1)
