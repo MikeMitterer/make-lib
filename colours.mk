@@ -31,6 +31,11 @@ else
 	NC           := ""
 endif
 
+# Die Farben können als Sample ausgegeben werden
+#
+# Usage:
+#     colors: ## show all the colors
+#	      $(call print_colours)
 define print_colours
 	@echo "${BLACK}BLACK${RESET}"
 	@echo "${RED}RED${RESET}"
@@ -41,3 +46,5 @@ define print_colours
 	@echo "${BLUE}BLUE${RESET}"
 	@echo "${WHITE}WHITE${RESET}"
 endef
+
+
