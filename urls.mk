@@ -12,6 +12,8 @@ define print_mobiad_urls
 	@echo "    MobiAd-Version:     ${BLUE}https://host.mobiad.io/api/v1/state/system${NC}"
 	@echo "    MobiAd-Config:      ${BLUE}https://host.mobiad.io/api/v1/state/settings${NC}"
 	@echo
+	@echo "    MobiAd-FE:          ${BLUE}https://fe.mobiad.io/#/${NC}"
+	@echo
 	@echo "    MobiCharts:         ${BLUE}https://mobicharts.mobiad.io/${NC}"
 	@echo "    MobiCharts-Version: ${BLUE}https://mobicharts.mobiad.io/static/app.json${NC}"
 	@echo "    MobiCharts-Config:  ${BLUE}https://mobicharts.mobiad.io/config${NC}"
