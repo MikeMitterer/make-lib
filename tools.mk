@@ -14,3 +14,13 @@ endef
 define infoLine
 	printf "    $(YELLOW)%-24s$(RESET) $(WHITE)%s$(RESET)\n" "" $(strip $(1))
 endef
+
+# Funktion zum Erzeugen einer Zeile mit zwei Spalten
+# Es wird ein optionaler Parameter für die vorhergehende Zeile angegeben
+#
+# Usage:
+#     @$(call optionLine,    "[COMMENT=\"...\"]",     "Kommentar für das Backup")
+#
+define optionLine
+	printf "        $(WHITE)%-20s$(RESET) $(WHITE)%s$(RESET)\n" $(strip $(1) $(strip $(2)))
+endef
