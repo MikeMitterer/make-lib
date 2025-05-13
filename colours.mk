@@ -4,14 +4,24 @@
 #
 
 ifneq (,$(findstring xterm,${TERM}))
-	BLACK        := $(shell tput -Txterm setaf 0)
-	RED          := $(shell tput -Txterm setaf 1)
-	GREEN        := $(shell tput -Txterm setaf 2)
-	YELLOW       := $(shell tput -Txterm setaf 3)
-	LIGHTPURPLE  := $(shell tput -Txterm setaf 4)
-	PURPLE       := $(shell tput -Txterm setaf 5)
-	BLUE         := $(shell tput -Txterm setaf 6)
-	WHITE        := $(shell tput -Txterm setaf 7)
+	# BLACK        := $(shell tput -Txterm setaf 0)
+	# RED          := $(shell tput -Txterm setaf 1)
+	# GREEN        := $(shell tput -Txterm setaf 2)
+	# YELLOW       := $(shell tput -Txterm setaf 3)
+	# LIGHTPURPLE  := $(shell tput -Txterm setaf 4)
+	# PURPLE       := $(shell tput -Txterm setaf 5)
+	# BLUE         := $(shell tput -Txterm setaf 6)
+	# WHITE        := $(shell tput -Txterm setaf 7)
+
+	BLACK        := $(shell printf "\033[38;5;%sm" 0)
+	RED          := $(shell printf "\033[38;5;%sm" 1)
+	GREEN        := $(shell printf "\033[38;5;%sm" 2)
+	YELLOW       := $(shell printf "\033[38;5;%sm" 3)
+	LIGHTPURPLE  := $(shell printf "\033[38;5;%sm" 200)
+	PURPLE       := $(shell printf "\033[38;5;%sm" 135)
+	BLUE         := $(shell printf "\033[38;5;%sm" 6)
+	WHITE        := $(shell printf "\033[38;5;%sm" 7)
+
 
 	# No-Color
 	RESET := $(shell tput -Txterm sgr0)
@@ -37,14 +47,13 @@ endif
 #     colors: ## show all the colors
 #	      $(call print_colours)
 define print_colours
-	@echo "${BLACK}BLACK${RESET}"
-	@echo "${RED}RED${RESET}"
-	@echo "${GREEN}GREEN${RESET}"
-	@echo "${YELLOW}YELLOW${RESET}"
-	@echo "${LIGHTPURPLE}LIGHTPURPLE${RESET}"
-	@echo "${PURPLE}PURPLE${RESET}"
-	@echo "${BLUE}BLUE${RESET}"
-	@echo "${WHITE}WHITE${RESET}"
+	@echo "256 Farben Tabelle:"
+	@for i in {0..255}; do \
+		printf "\033[38;5;%sm%4s\033[0m " $$i $$i; \
+		if [ $$((($$i + 1) % 16)) -eq 0 ]; then \
+			echo ""; \
+		fi; \
+	done
 endef
 
 
