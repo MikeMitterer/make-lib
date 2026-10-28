@@ -12,8 +12,8 @@
 MakeLib besteht aus zwei Dateien, die ein Makefile mit `include` einbindet:
 `colours.mk` liefert ANSI-Farben und Themes, `tools.mk` Makros für eine
 zweispaltige Hilfeausgabe. Gefunden werden sie über die Variable `DEV_MAKE`.
-Ein Makefile läuft auch ohne MakeLib, dann ohne Farben (siehe
-[Einbinden](#einbinden)).
+Wer nur die Farben nutzt, kann MakeLib optional einbinden; wer die Makros
+nutzt, setzt MakeLib voraus (siehe [Einbinden](#einbinden)).
 
 ## Übersicht
 
@@ -51,18 +51,32 @@ des Klons ist frei. Aktualisieren mit `git -C ~/.local/share/make-lib pull`.
 
 ## Einbinden
 
-**Immer mit `-include`.** `-include` überspringt eine fehlende Datei, statt
-abzubrechen. So läuft das Makefile auch in einem frischen Klon oder im CI ohne
-`DEV_MAKE`; die Farbvariablen bleiben dann leer, und die Ausgabe erscheint
-ohne Farben. Ersatz braucht es nur für Makros aus `tools.mk`, die das Makefile
-aufruft, sonst fehlen deren Zeilen.
+**Ein Makefile baut nichts aus MakeLib nach.** Ersatzdefinitionen im eigenen
+Makefile wären Kopien, die mit der Zeit auseinanderlaufen. Wie es eingebunden
+wird, hängt davon ab, was das Makefile nutzt.
+
+**Nur Farben aus `colours.mk`: optional mit `-include`.** Fehlt MakeLib,
+bleiben die Farbvariablen leer und die Ausgabe erscheint ohne Farben. So läuft
+das Makefile auch in einem frischen Klon oder im CI ohne `DEV_MAKE`.
 
 ```make
 -include $(DEV_MAKE)/colours.mk
--include $(DEV_MAKE)/tools.mk
 
-# Ersatz, wenn tools.mk fehlt
-usageLine2 ?= @printf '       %-22s %s\n'
+help:
+	@printf '\n$(THEME_COLOR_GROUP)Befehle$(RESET)\n'
+```
+
+**Makros aus `tools.mk`: MakeLib ist Voraussetzung.** Ohne die Datei wären
+`usageLine2` und die anderen Makros leer, und make scheitert mit einer
+unverständlichen Meldung der Shell. Deshalb prüft das Makefile vorher und
+bricht mit einem klaren Hinweis ab:
+
+```make
+ifeq ($(wildcard $(DEV_MAKE)/tools.mk),)
+$(error MakeLib fehlt: DEV_MAKE auf den Checkout von https://github.com/MikeMitterer/make-lib setzen)
+endif
+include $(DEV_MAKE)/colours.mk
+include $(DEV_MAKE)/tools.mk
 
 help:
 	@printf '\n$(THEME_COLOR_GROUP)Befehle$(RESET)\n'
