@@ -1,75 +1,122 @@
-# make-lib
+<div align="center">
 
-## Usage
+# MakeLib
 
-Die libs in diesem Folder werden den `Makefile`s   
-z.B. über
+**Farben, Themes und Hilfezeilen für Makefiles**
 
-```makefile
-    ifdef DEV_MAKE
-        include ${DEV_MAKE}/colours.mk
-    endif
-```
+[Voraussetzungen](#voraussetzungen) · [Installation](#installation) ·
+[Einbinden](#einbinden) · [Dateien](#dateien) · [Lizenz](#lizenz)
 
-eingebunden
+</div>
 
-## Libs
+MakeLib besteht aus zwei Dateien, die ein Makefile mit `include` einbindet:
+`colours.mk` liefert ANSI-Farben und Themes, `tools.mk` Makros für eine
+zweispaltige Hilfeausgabe. Gefunden werden sie über die Variable `DEV_MAKE`.
+Ein Makefile soll auch ohne MakeLib laufen; dafür setzt es eigene
+Ersatzwerte (siehe [Einbinden](#einbinden)).
 
-- colours.mk, Unterstützung für ANSI-Colors im Makefile
+## Übersicht
 
+- [Voraussetzungen](#voraussetzungen)
+- [Installation](#installation)
+- [Einbinden](#einbinden)
+- [Dateien](#dateien)
+- [Farben und Themes](#farben-und-themes)
+- [Lizenz](#lizenz)
 
-## CLI-Themes und Abstände
+## Voraussetzungen
 
-Die drei eigenständigen Dateien MakeLib `colours.mk`, BashLib
-`src/colors.lib.sh` und ProjectTools `src/python/colors.py` verwenden dieselbe
-Palette und Theme-Auswahl: `classic` (Standard), `ocean`, `earth`, `night`,
-`mono`, `sunset`, `forest`, `neon`, `shell`. Ein unbekannter Name verwendet
-`classic`. Die Auswahl kann wie bisher in der jeweiligen Datei umgestellt
-oder mit `MAKE_THEME` überschrieben werden. Es gibt keine generierte Datei.
-Make exportiert die Auswahl und Layout-Werte an seine Kindprozesse.
+- **GNU Make**, auch die Version 3.81, die macOS mitbringt.
+- **`DEV_MAKE`** zeigt auf den Checkout dieses Repos (siehe
+  [Installation](#installation)).
+
+[↑ Übersicht](#übersicht)
+
+## Installation
 
 ```bash
-make help MAKE_THEME=ocean
-MAKE_THEME=ocean "$PROJECT_TOOLS/bash/py-run.sh" --help
-MAKE_THEME=ocean python3 "$PROJECT_TOOLS/python/changelog.py" --help
+git clone https://github.com/MikeMitterer/make-lib.git ~/.local/share/make-lib
 ```
 
-| Einstellung | Vorgabe | Bedeutung |
-|---|---|---|
-| `THEME_INDENT_GROUP` | zwei Leerzeichen | Gruppenüberschrift |
-| `THEME_INDENT_TARGET` | sieben Leerzeichen | Target oder Option |
-| `THEME_WIDTH_TARGET` | `22` | Breite der ersten Spalte |
-| `THEME_COLUMN_GAP` | `1` | Mindestabstand zur Beschreibung |
-| `THEME_WIDTH_HELP` | `110` | Python-Hilfe: gesamte Textbreite |
-| `THEME_GROUP_SPACING` | `1` | Leerzeilen zwischen Gruppen |
+Danach `DEV_MAKE` dauerhaft setzen, etwa in `~/.bashrc` oder `~/.zshrc`:
 
-Mit diesen Vorgaben beginnt die Beschreibung in Spalte 31. Lange Beschriftungen
-stehen bei `usageLine`/`themeLine` und der Python-Hilfe auf einer eigenen Zeile.
-Python bricht lange Beschreibungen an der Gesamtbreite um; Bash und Make
-geben Beschreibungstexte wie bisher unverändert aus. Einrückungen sind weiterhin
-**Leerzeichenketten**, Breiten und Abstände nichtnegative Zahlen. Einzelne
-Werte vor dem Include/Source beziehungsweise per Umgebung überschreiben.
+```bash
+export DEV_MAKE="$HOME/.local/share/make-lib"
+```
 
-`THEME_COLOR_GROUP`, `TARGET`, `DESC`, `SERVER`, `DANGER` (jeweils mit dem Präfix
-`THEME_COLOR_`) behalten ihre Namen. Hinzu kommen `THEME_COLOR_SUCCESS` und
-`THEME_COLOR_WARNING`. Grundfarben und die bisherigen öffentlichen Makros,
-Bash-Funktionen und Argumente bleiben verfügbar. Die Standarddarstellung der
-Ausgabehelfer folgt jetzt dem gemeinsamen Theme.
+`DEV_MAKE` zeigt auf das Repo selbst, nicht auf ein Unterverzeichnis. Der Ort
+des Klons ist frei. Aktualisieren mit `git -C ~/.local/share/make-lib pull`.
 
-Die neuen Bash-/Python-Helfer geben in Pipes, bei `NO_COLOR` und `TERM=dumb`
-keine ANSI-Farben aus. Make berücksichtigt `NO_COLOR` und behält seine bisherige
-TERM-basierte Farberkennung. Bash-Grundkonstanten bleiben aus Kompatibilität
-unveränderte Escape-Strings für `printf '%b'` oder `echo -e`.
+[↑ Übersicht](#übersicht)
+
+## Einbinden
+
+**Immer mit `-include` und mit Ersatzwerten.** `-include` überspringt eine
+fehlende Datei, statt abzubrechen. Die Ersatzwerte mit `?=` greifen nur, wenn
+MakeLib sie nicht schon gesetzt hat. So läuft das Makefile auch in einem
+frischen Klon oder im CI ohne `DEV_MAKE`.
+
+```make
+-include $(DEV_MAKE)/colours.mk
+-include $(DEV_MAKE)/tools.mk
+
+# Ersatz, wenn MakeLib fehlt
+YELLOW ?= $(shell printf "\033[38;5;11m")
+RESET  ?= $(shell printf "\033[0m")
+THEME_COLOR_GROUP ?= $(YELLOW)
+usageLine2 ?= @printf '       %-22s %s\n'
+
+help:
+	@printf '\n$(THEME_COLOR_GROUP)Befehle$(RESET)\n'
+	$(usageLine2) "help" "Hilfe anzeigen"
+	$(usageLine2) "test" "Tests starten"
+```
+
+Ersatzwerte braucht nur, was das eigene Makefile tatsächlich verwendet.
+
+[↑ Übersicht](#übersicht)
+
+## Dateien
+
+| Datei | Inhalt |
+|---|---|
+| `colours.mk` | Grundfarben (`RED`, `GREEN`, `YELLOW`, `BLUE` …, `RESET`, `NC`), erweiterte Palette, Theme-Farben (`THEME_COLOR_GROUP`, `THEME_COLOR_TARGET`, `THEME_COLOR_DESC` …), Layoutwerte (`THEME_INDENT_GROUP`, `THEME_INDENT_TARGET`, `THEME_WIDTH_TARGET`, `THEME_WIDTH_HELP` …), Makro `print_colours` für eine 256-Farben-Tabelle |
+| `tools.mk` | Zweispaltige Zeilen für Hilfeausgaben: `usageLine`, `infoLine`, `optionLine` (mit `$(call …)`) und `usageLine2`, `infoLine2`, `optionLine2` (direkt mit Argumenten) |
+
+[↑ Übersicht](#übersicht)
+
+## Farben und Themes
+
+`MAKE_THEME` wählt das Theme (`classic`, `ocean`, `earth`, `night`, `mono`,
+`sunset`, `forest`, `neon`, `shell`), als Variable beim Aufruf von make oder
+in der Umgebung, etwa `export MAKE_THEME=ocean`.
+Bei gesetztem `NO_COLOR` oder einem Terminal ohne `xterm` im `TERM` gibt es
+keine Farben. Layoutwerte, Farbrollen und die Abstimmung mit BashLib und
+ProjectTools stehen in [docs/themes.md](docs/themes.md).
+
+[↑ Übersicht](#übersicht)
 
 ## Lizenz
 
-Copyright © 2022–2026 Michael Mitterer. **MangoLila GmbH** ist Anbieter und
-Lizenzgeber.
+Copyright © 2022–2026 Michael Mitterer. **MangoLila GmbH** ist Anbieterin und
+Lizenzgeberin.
 
 MakeLib steht unter der **[EUPL 1.2](LICENSE)**, nur Version 1.2. Sie erlaubt
 private und gewerbliche Nutzung, Änderungen, Weitergabe, Verkauf und Hosting
-ohne kostenpflichtige Lizenz. Wer MakeLib oder eine geänderte Fassung
-weitergibt, behält die Urheber- und Lizenzhinweise bei, kennzeichnet
-Änderungen und stellt den Quellcode nach den Copyleft-Regeln der Lizenz
-bereit. Details: [LICENSING.md](LICENSING.md), deutscher Lizenztext:
-[LICENSE.de.txt](LICENSE.de.txt).
+ohne kostenpflichtige Lizenz.
+
+Wer MakeLib oder eine geänderte Fassung weitergibt oder als Netzwerkdienst
+anbietet, muss die Urheber- und Lizenzhinweise erhalten, Änderungen
+kennzeichnen und den zugehörigen Quelltext nach den Copyleft-Regeln der
+Lizenz bereitstellen.
+
+Die Gewährleistungs- und Haftungsausschlüsse der EUPL-Artikel 7 und 8 gelten
+auch gegenüber Verbrauchern, soweit das Gesetz es zulässt. Zwingende Rechte
+bleiben unberührt, darunter die Haftung für Vorsatz, grobe Fahrlässigkeit,
+Personenschäden und nach dem Produkthaftungsgesetz. Eine zusätzliche Garantie
+wird nicht übernommen.
+
+Kontakt: **office@MangoLila.at**.
+
+Details: [LICENSE](LICENSE) · [Deutscher Lizenztext](LICENSE.de.txt) ·
+[Anbieter- und Verbrauchererklärung](LICENSING.md)
