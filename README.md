@@ -12,8 +12,8 @@
 MakeLib besteht aus zwei Dateien, die ein Makefile mit `include` einbindet:
 `colours.mk` liefert ANSI-Farben und Themes, `tools.mk` Makros für eine
 zweispaltige Hilfeausgabe. Gefunden werden sie über die Variable `DEV_MAKE`.
-Ein Makefile soll auch ohne MakeLib laufen; dafür setzt es eigene
-Ersatzwerte (siehe [Einbinden](#einbinden)).
+Ein Makefile läuft auch ohne MakeLib, dann ohne Farben (siehe
+[Einbinden](#einbinden)).
 
 ## Übersicht
 
@@ -51,19 +51,17 @@ des Klons ist frei. Aktualisieren mit `git -C ~/.local/share/make-lib pull`.
 
 ## Einbinden
 
-**Immer mit `-include` und mit Ersatzwerten.** `-include` überspringt eine
-fehlende Datei, statt abzubrechen. Die Ersatzwerte mit `?=` greifen nur, wenn
-MakeLib sie nicht schon gesetzt hat. So läuft das Makefile auch in einem
-frischen Klon oder im CI ohne `DEV_MAKE`.
+**Immer mit `-include`.** `-include` überspringt eine fehlende Datei, statt
+abzubrechen. So läuft das Makefile auch in einem frischen Klon oder im CI ohne
+`DEV_MAKE`; die Farbvariablen bleiben dann leer, und die Ausgabe erscheint
+ohne Farben. Ersatz braucht es nur für Makros aus `tools.mk`, die das Makefile
+aufruft, sonst fehlen deren Zeilen.
 
 ```make
 -include $(DEV_MAKE)/colours.mk
 -include $(DEV_MAKE)/tools.mk
 
-# Ersatz, wenn MakeLib fehlt
-YELLOW ?= $(shell printf "\033[38;5;11m")
-RESET  ?= $(shell printf "\033[0m")
-THEME_COLOR_GROUP ?= $(YELLOW)
+# Ersatz, wenn tools.mk fehlt
 usageLine2 ?= @printf '       %-22s %s\n'
 
 help:
@@ -71,8 +69,6 @@ help:
 	$(usageLine2) "help" "Hilfe anzeigen"
 	$(usageLine2) "test" "Tests starten"
 ```
-
-Ersatzwerte braucht nur, was das eigene Makefile tatsächlich verwendet.
 
 [↑ Übersicht](#übersicht)
 
