@@ -1,7 +1,7 @@
 # CLI-Themes und Abstände
 
 Die drei eigenständigen Dateien MakeLib `colours.mk`, BashLib
-`src/colors.lib.sh` und ProjectTools `colors.py` verwenden dieselbe
+`colors.lib.sh` und ProjectTools `colors.py` verwenden dieselbe
 Palette und Theme-Auswahl: `classic` (Standard), `ocean`, `earth`, `night`,
 `mono`, `sunset`, `forest`, `neon`, `shell`. Ein unbekannter Name verwendet
 `classic`. Die Auswahl kann wie bisher in der jeweiligen Datei umgestellt

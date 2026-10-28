@@ -5,7 +5,7 @@
 **Farben, Themes und Hilfezeilen für Makefiles**
 
 [Voraussetzungen](#voraussetzungen) · [Installation](#installation) ·
-[Einbinden](#einbinden) · [Dateien](#dateien) · [Lizenz](#lizenz)
+[Einbinden](#einbinden) · [Beispiel](example/Makefile) · [Lizenz](#lizenz)
 
 </div>
 
@@ -27,7 +27,7 @@ nutzt, setzt MakeLib voraus (siehe [Einbinden](#einbinden)).
 ## Voraussetzungen
 
 - **GNU Make**, auch die Version 3.81, die macOS mitbringt.
-- **`DEV_MAKE`** zeigt auf den Checkout dieses Repos (siehe
+- **`DEV_MAKE`** zeigt auf das Verzeichnis `src` dieses Repos (siehe
   [Installation](#installation)).
 
 [↑ Übersicht](#übersicht)
@@ -41,11 +41,11 @@ git clone https://github.com/MikeMitterer/make-lib.git ~/.local/share/make-lib
 Danach `DEV_MAKE` dauerhaft setzen, etwa in `~/.bashrc` oder `~/.zshrc`:
 
 ```bash
-export DEV_MAKE="$HOME/.local/share/make-lib"
+export DEV_MAKE="$HOME/.local/share/make-lib/src"
 ```
 
-`DEV_MAKE` zeigt auf das Repo selbst, nicht auf ein Unterverzeichnis. Der Ort
-des Klons ist frei. Aktualisieren mit `git -C ~/.local/share/make-lib pull`.
+`DEV_MAKE` zeigt auf `src`, nicht auf das Repo selbst. Der Ort des Klons ist
+frei. Aktualisieren mit `git -C ~/.local/share/make-lib pull`.
 
 [↑ Übersicht](#übersicht)
 
@@ -73,7 +73,7 @@ bricht mit einem klaren Hinweis ab:
 
 ```make
 ifeq ($(wildcard $(DEV_MAKE)/tools.mk),)
-$(error MakeLib fehlt: DEV_MAKE auf den Checkout von https://github.com/MikeMitterer/make-lib setzen)
+$(error MakeLib fehlt: DEV_MAKE auf MakeLib/src setzen (https://github.com/MikeMitterer/make-lib))
 endif
 include $(DEV_MAKE)/colours.mk
 include $(DEV_MAKE)/tools.mk
@@ -88,10 +88,15 @@ help:
 
 ## Dateien
 
+Ein vollständiges Beispiel mit beiden Dateien steht in
+[example/Makefile](example/Makefile); es läuft im Repo mit
+`make -C example`.
+
+
 | Datei | Inhalt |
 |---|---|
-| `colours.mk` | Grundfarben (`RED`, `GREEN`, `YELLOW`, `BLUE` …, `RESET`, `NC`), erweiterte Palette, Theme-Farben (`THEME_COLOR_GROUP`, `THEME_COLOR_TARGET`, `THEME_COLOR_DESC` …), Layoutwerte (`THEME_INDENT_GROUP`, `THEME_INDENT_TARGET`, `THEME_WIDTH_TARGET`, `THEME_WIDTH_HELP` …), Makro `print_colours` für eine 256-Farben-Tabelle |
-| `tools.mk` | Zweispaltige Zeilen für Hilfeausgaben: `usageLine`, `infoLine`, `optionLine` (mit `$(call …)`) und `usageLine2`, `infoLine2`, `optionLine2` (direkt mit Argumenten) |
+| `src/colours.mk` | Grundfarben (`RED`, `GREEN`, `YELLOW`, `BLUE` …, `RESET`, `NC`), erweiterte Palette, Theme-Farben (`THEME_COLOR_GROUP`, `THEME_COLOR_TARGET`, `THEME_COLOR_DESC` …), Layoutwerte (`THEME_INDENT_GROUP`, `THEME_INDENT_TARGET`, `THEME_WIDTH_TARGET`, `THEME_WIDTH_HELP` …), Makro `print_colours` für eine 256-Farben-Tabelle |
+| `src/tools.mk` | Zweispaltige Zeilen für Hilfeausgaben: `usageLine`, `infoLine`, `optionLine` (mit `$(call …)`) und `usageLine2`, `infoLine2`, `optionLine2` (direkt mit Argumenten) |
 
 [↑ Übersicht](#übersicht)
 
