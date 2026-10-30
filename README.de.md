@@ -24,6 +24,7 @@ nutzt, setzt MakeLib voraus (siehe [Einbinden](#einbinden)).
 - [Einbinden](#einbinden)
 - [Dateien](#dateien)
 - [Farben und Themes](#farben-und-themes)
+- [Entwicklung](#entwicklung)
 - [Lizenz](#lizenz)
 
 ## Voraussetzungen
@@ -110,6 +111,13 @@ in der Umgebung, etwa `export MAKE_THEME=ocean`.
 Bei gesetztem `NO_COLOR` oder einem Terminal ohne `xterm` im `TERM` gibt es
 keine Farben. Layoutwerte, Farbrollen und die Abstimmung mit BashLib und
 ProjectTools stehen in [docs/themes.md](docs/themes.md).
+
+[↑ Übersicht](#übersicht)
+
+## Entwicklung
+
+Einrichten eines Checkouts, Befehle, Prüfung und Release beschreibt
+[docs/development.md](docs/development.md).
 
 [↑ Übersicht](#übersicht)
 

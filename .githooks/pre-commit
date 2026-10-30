@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# Prüft vor jedem Commit die Nutzerdoku. Fehlt ProjectTools, warnt der Hook nur
+# und lässt den Commit durch; make docs-check bricht in dem Fall ab.
+set -euo pipefail
+
+if ! command -v docs-check >/dev/null 2>&1; then
+    echo "  ⚠ docs-check fehlt (ProjectTools, siehe make hints) — Doku nicht geprüft" >&2
+    exit 0
+fi
+exec make --no-print-directory docs-check

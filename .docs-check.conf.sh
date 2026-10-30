@@ -111,6 +111,7 @@ REQUIRED=(
     "./LICENSE|Lizenztext, im README verlinkt"
     "./LICENSE.de.txt|deutscher Lizenztext, im README verlinkt"
     "./LICENSING.md|Anbieter- und Verbrauchererklärung, im README verlinkt"
+    "./docs/development.md|Entwicklerdoku, im README verlinkt"
 )
 
 # ─── Abhängige Dateien und Screenshots ─────────────────────────────────────────
@@ -162,6 +163,7 @@ DEPENDS=(
 # Gleiches Format, auch überfällig nur ein Hinweis: für Basen, die sich oft
 # ändern, ohne dass die abhängige Datei etwas nachziehen muss.
 DEPENDS_HINT=(
+    "Makefile,scripts,.dev-tools.conf.sh|docs/development.md|30|Befehle und Einrichten"
 )
 
 # Optional: Sprachfassungen mit derselben Gliederung, je
