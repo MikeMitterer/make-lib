@@ -43,4 +43,4 @@ Palette und Themes sind mit BashLib `colors.lib.sh` und ProjectTools
 `colors.py` abgestimmt. Wer sie in `colours.mk` ändert, gleicht die beiden
 anderen Dateien an.
 
-Zurück zum [README](../README.md).
+Zurück zum [README](../README.de.md).
