@@ -22,6 +22,7 @@ nutzt, setzt MakeLib voraus (siehe [Einbinden](#einbinden)).
 - [Einbinden](#einbinden)
 - [Dateien](#dateien)
 - [Farben und Themes](#farben-und-themes)
+- [Entwicklung](#entwicklung)
 - [Lizenz](#lizenz)
 
 ## Voraussetzungen
@@ -108,6 +109,16 @@ in der Umgebung, etwa `export MAKE_THEME=ocean`.
 Bei gesetztem `NO_COLOR` oder einem Terminal ohne `xterm` im `TERM` gibt es
 keine Farben. Layoutwerte, Farbrollen und die Abstimmung mit BashLib und
 ProjectTools stehen in [docs/themes.md](docs/themes.md).
+
+[↑ Übersicht](#übersicht)
+
+## Entwicklung
+
+`make setup` richtet einen Checkout ein; MakeLib braucht dafür nichts zu
+installieren, das Ziel ist aber beliebig oft aufrufbar. `make check` prüft
+[example/Makefile](example/Makefile) gegen `src/` dieses Checkouts: jedes
+Theme, die Ausgabe ohne Farben, die Farbtabelle und den Abbruch ohne MakeLib.
+Die Prüfungen stehen in [scripts/check.sh](scripts/check.sh).
 
 [↑ Übersicht](#übersicht)
 
