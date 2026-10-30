@@ -84,7 +84,7 @@ hints: ## Nützliche Links und Hinweise anzeigen
 	@echo "$(THEME_INDENT_GROUP)$(THEME_COLOR_GROUP)Werkzeuge$(RESET)"
 	@$(call hint_row,ProjectTools,$(PROJECTTOOLS_INSTALL))
 	@$(call hint_row,BashLib (Maintainer),$(BASHLIB_INSTALL))
-	@$(call hint_row,Arbeitskopie,pipx install -e <Pfad>)
+	@$(call hint_row,Arbeitskopie,pipx install -e '$(WORKSPACE)')
 	@echo
 	@echo "$(THEME_INDENT_GROUP)$(THEME_COLOR_GROUP)Links$(RESET)"
 	@$(call hint_row,Repository,$(or $(REPO_URL),$(NO_REMOTE)))
