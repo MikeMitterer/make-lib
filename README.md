@@ -2,35 +2,37 @@
 
 # MakeLib
 
-**Farben, Themes und Hilfezeilen für Makefiles**
+**Colours, themes and help lines for Makefiles**
 
-[Voraussetzungen](#voraussetzungen) · [Installation](#installation) ·
-[Einbinden](#einbinden) · [Beispiel](example/Makefile) · [Lizenz](#lizenz)
+[Requirements](#requirements) · [Installation](#installation) ·
+[Including](#including) · [Example](example/Makefile) · [License](#license)
+
+English · [Deutsch](README.de.md)
 
 </div>
 
-MakeLib besteht aus zwei Dateien, die ein Makefile mit `include` einbindet:
-`colours.mk` liefert ANSI-Farben und Themes, `tools.mk` Makros für eine
-zweispaltige Hilfeausgabe. Gefunden werden sie über die Variable `DEV_MAKE`.
-Wer nur die Farben nutzt, kann MakeLib optional einbinden; wer die Makros
-nutzt, setzt MakeLib voraus (siehe [Einbinden](#einbinden)).
+MakeLib consists of two files that a Makefile pulls in with `include`:
+`colours.mk` provides ANSI colours and themes, `tools.mk` provides macros for
+two-column help output. They are found through the variable `DEV_MAKE`.
+If you only use the colours, including MakeLib is optional; if you use the
+macros, MakeLib is a requirement (see [Including](#including)).
 
-## Übersicht
+## Overview
 
-- [Voraussetzungen](#voraussetzungen)
+- [Requirements](#requirements)
 - [Installation](#installation)
-- [Einbinden](#einbinden)
-- [Dateien](#dateien)
-- [Farben und Themes](#farben-und-themes)
-- [Lizenz](#lizenz)
+- [Including](#including)
+- [Files](#files)
+- [Colours and themes](#colours-and-themes)
+- [License](#license)
 
-## Voraussetzungen
+## Requirements
 
-- **GNU Make**, auch die Version 3.81, die macOS mitbringt.
-- **`DEV_MAKE`** zeigt auf das Verzeichnis `src` dieses Repos (siehe
+- **GNU Make**, including version 3.81 that ships with macOS.
+- **`DEV_MAKE`** points to the `src` directory of this repository (see
   [Installation](#installation)).
 
-[↑ Übersicht](#übersicht)
+[↑ Overview](#overview)
 
 ## Installation
 
@@ -38,38 +40,39 @@ nutzt, setzt MakeLib voraus (siehe [Einbinden](#einbinden)).
 git clone https://github.com/MikeMitterer/make-lib.git ~/.local/share/make-lib
 ```
 
-Danach `DEV_MAKE` dauerhaft setzen, etwa in `~/.bashrc` oder `~/.zshrc`:
+Then set `DEV_MAKE` permanently, for example in `~/.bashrc` or `~/.zshrc`:
 
 ```bash
 export DEV_MAKE="$HOME/.local/share/make-lib/src"
 ```
 
-`DEV_MAKE` zeigt auf `src`, nicht auf das Repo selbst. Der Ort des Klons ist
-frei. Aktualisieren mit `git -C ~/.local/share/make-lib pull`.
+`DEV_MAKE` points to `src`, not to the repository itself. The location of the
+clone is up to you. Update with `git -C ~/.local/share/make-lib pull`.
 
-[↑ Übersicht](#übersicht)
+[↑ Overview](#overview)
 
-## Einbinden
+## Including
 
-**Ein Makefile baut nichts aus MakeLib nach.** Ersatzdefinitionen im eigenen
-Makefile wären Kopien, die mit der Zeit auseinanderlaufen. Wie es eingebunden
-wird, hängt davon ab, was das Makefile nutzt.
+**A Makefile does not rebuild anything from MakeLib.** Replacement definitions
+in your own Makefile would be copies that drift apart over time. How to
+include MakeLib depends on what the Makefile uses.
 
-**Nur Farben aus `colours.mk`: optional mit `-include`.** Fehlt MakeLib,
-bleiben die Farbvariablen leer und die Ausgabe erscheint ohne Farben. So läuft
-das Makefile auch in einem frischen Klon oder im CI ohne `DEV_MAKE`.
+**Only colours from `colours.mk`: optional with `-include`.** If MakeLib is
+missing, the colour variables stay empty and the output appears without
+colours. The Makefile then also runs in a fresh clone or in CI without
+`DEV_MAKE`.
 
 ```make
 -include $(DEV_MAKE)/colours.mk
 
 help:
-	@printf '\n$(THEME_COLOR_GROUP)Befehle$(RESET)\n'
+	@printf '\n$(THEME_COLOR_GROUP)Commands$(RESET)\n'
 ```
 
-**Makros aus `tools.mk`: MakeLib ist Voraussetzung.** Ohne die Datei wären
-`usageLine2` und die anderen Makros leer, und make scheitert mit einer
-unverständlichen Meldung der Shell. Deshalb prüft das Makefile vorher und
-bricht mit einem klaren Hinweis ab:
+**Macros from `tools.mk`: MakeLib is a requirement.** Without the file,
+`usageLine2` and the other macros would be empty, and make fails with an
+obscure message from the shell. The Makefile therefore checks first and stops
+with a clear hint:
 
 ```make
 ifeq ($(wildcard $(DEV_MAKE)/tools.mk),)
@@ -79,59 +82,57 @@ include $(DEV_MAKE)/colours.mk
 include $(DEV_MAKE)/tools.mk
 
 help:
-	@printf '\n$(THEME_COLOR_GROUP)Befehle$(RESET)\n'
-	$(usageLine2) "help" "Hilfe anzeigen"
-	$(usageLine2) "test" "Tests starten"
+	@printf '\n$(THEME_COLOR_GROUP)Commands$(RESET)\n'
+	$(usageLine2) "help" "Show help"
+	$(usageLine2) "test" "Run tests"
 ```
 
-[↑ Übersicht](#übersicht)
+[↑ Overview](#overview)
 
-## Dateien
+## Files
 
-Ein vollständiges Beispiel mit beiden Dateien steht in
-[example/Makefile](example/Makefile); es läuft im Repo mit
+A complete example using both files is in
+[example/Makefile](example/Makefile); in the repository it runs with
 `make -C example`.
 
 
-| Datei | Inhalt |
+| File | Contents |
 |---|---|
-| `src/colours.mk` | Grundfarben (`RED`, `GREEN`, `YELLOW`, `BLUE` …, `RESET`, `NC`), erweiterte Palette, Theme-Farben (`THEME_COLOR_GROUP`, `THEME_COLOR_TARGET`, `THEME_COLOR_DESC` …), Layoutwerte (`THEME_INDENT_GROUP`, `THEME_INDENT_TARGET`, `THEME_WIDTH_TARGET`, `THEME_WIDTH_HELP` …), Makro `print_colours` für eine 256-Farben-Tabelle |
-| `src/tools.mk` | Zweispaltige Zeilen für Hilfeausgaben: `usageLine`, `infoLine`, `optionLine` (mit `$(call …)`) und `usageLine2`, `infoLine2`, `optionLine2` (direkt mit Argumenten) |
+| `src/colours.mk` | Basic colours (`RED`, `GREEN`, `YELLOW`, `BLUE` …, `RESET`, `NC`), extended palette, theme colours (`THEME_COLOR_GROUP`, `THEME_COLOR_TARGET`, `THEME_COLOR_DESC` …), layout values (`THEME_INDENT_GROUP`, `THEME_INDENT_TARGET`, `THEME_WIDTH_TARGET`, `THEME_WIDTH_HELP` …), macro `print_colours` for a 256-colour table |
+| `src/tools.mk` | Two-column lines for help output: `usageLine`, `infoLine`, `optionLine` (with `$(call …)`) and `usageLine2`, `infoLine2`, `optionLine2` (directly with arguments) |
 
-[↑ Übersicht](#übersicht)
+[↑ Overview](#overview)
 
-## Farben und Themes
+## Colours and themes
 
-`MAKE_THEME` wählt das Theme (`classic`, `ocean`, `earth`, `night`, `mono`,
-`sunset`, `forest`, `neon`, `shell`), als Variable beim Aufruf von make oder
-in der Umgebung, etwa `export MAKE_THEME=ocean`.
-Bei gesetztem `NO_COLOR` oder einem Terminal ohne `xterm` im `TERM` gibt es
-keine Farben. Layoutwerte, Farbrollen und die Abstimmung mit BashLib und
-ProjectTools stehen in [docs/themes.md](docs/themes.md).
+`MAKE_THEME` selects the theme (`classic`, `ocean`, `earth`, `night`, `mono`,
+`sunset`, `forest`, `neon`, `shell`), as a variable when calling make or in
+the environment, for example `export MAKE_THEME=ocean`.
+With `NO_COLOR` set, or a terminal without `xterm` in `TERM`, there are no
+colours. Layout values, colour roles and the alignment with BashLib and
+ProjectTools are described in [docs/themes.md](docs/themes.md) (German).
 
-[↑ Übersicht](#übersicht)
+[↑ Overview](#overview)
 
-## Lizenz
+## License
 
-Copyright © 2022–2026 Michael Mitterer. **MangoLila GmbH** ist Anbieterin und
-Lizenzgeberin.
+Copyright © 2022–2026 Michael Mitterer. **MangoLila GmbH** is the provider and
+licensor.
 
-MakeLib steht unter der **[EUPL 1.2](LICENSE)**, nur Version 1.2. Sie erlaubt
-private und gewerbliche Nutzung, Änderungen, Weitergabe, Verkauf und Hosting
-ohne kostenpflichtige Lizenz.
+MakeLib is licensed under the **[EUPL 1.2](LICENSE)**, version 1.2 only. It
+permits personal and commercial use, changes, redistribution, sale and hosting
+without a paid license.
 
-Wer MakeLib oder eine geänderte Fassung weitergibt oder als Netzwerkdienst
-anbietet, muss die Urheber- und Lizenzhinweise erhalten, Änderungen
-kennzeichnen und den zugehörigen Quelltext nach den Copyleft-Regeln der
-Lizenz bereitstellen.
+If you redistribute MakeLib or a changed version, or offer it as a network
+service, keep the copyright and license notices, mark your changes and
+provide the corresponding source under the license's copyleft rules.
 
-Die Gewährleistungs- und Haftungsausschlüsse der EUPL-Artikel 7 und 8 gelten
-auch gegenüber Verbrauchern, soweit das Gesetz es zulässt. Zwingende Rechte
-bleiben unberührt, darunter die Haftung für Vorsatz, grobe Fahrlässigkeit,
-Personenschäden und nach dem Produkthaftungsgesetz. Eine zusätzliche Garantie
-wird nicht übernommen.
+The warranty and liability exclusions in EUPL Articles 7 and 8 also apply to
+consumers, as far as the law permits. Mandatory rights remain unaffected,
+including liability for intent, gross negligence, personal injury and product
+liability. No additional guarantee is given.
 
-Kontakt: **office@MangoLila.at**.
+Contact: **office@MangoLila.at**.
 
-Details: [LICENSE](LICENSE) · [Deutscher Lizenztext](LICENSE.de.txt) ·
-[Anbieter- und Verbrauchererklärung](LICENSING.md)
+Details: [LICENSE](LICENSE) · [German license text](LICENSE.de.txt) ·
+[Provider and consumer declaration](LICENSING.md)
