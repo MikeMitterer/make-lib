@@ -5,6 +5,16 @@ SHELL := bash
 WORKSPACE    := $(realpath $(shell pwd))
 PROJECT_NAME := $(notdir $(WORKSPACE))
 
+# Pfade von außen (Checkout-Ordner, BASH_LIBS) gelangen nur über die Umgebung in
+# die Rezepte, nie als eingesetzter Text: Ein $(…) oder Apostroph im Ordnernamen
+# wird so nicht von der Shell ausgewertet. WORKSPACE_SQ ist der Pfad in einfachen
+# Anführungszeichen, wie ihn ein kopierter Befehl braucht.
+export WORKSPACE PROJECT_NAME
+export WORKSPACE_SQ := '$(subst ','\'',$(WORKSPACE))'
+# Die Hilfezeilen stehen nur in diesem Makefile. $(value …) liest MAKEFILE_LIST
+# unausgewertet: ein $(…) im Pfad (etwa bei make -f) liefe sonst in Make selbst.
+export HELP_FILE := $(firstword $(value MAKEFILE_LIST))
+
 # Release-Tags der pipx-Werkzeuge (makefile-conventions, Gemeinsame Werkzeuge)
 include .dev-tools.conf.sh
 
@@ -28,7 +38,7 @@ MAINTAINER_MARK = $(THEME_COLOR_DANGER)[Maintainer]$(THEME_COLOR_DESC)
 
 # Prüft vor Maintainer-Targets, ob BashLib vorhanden ist.
 define require_bash_libs
-	@test -r "$(BASH_LIBS)/version.lib.sh" || { \
+	@test -r "$${BASH_LIBS}/version.lib.sh" || { \
 		echo -e "  $(RED)✗$(RESET) Nur für Maintainer: benötigt BashLib ($(YELLOW)BASH_LIBS$(RESET))." >&2; \
 		echo -e "    $(BASHLIB_INSTALL)" >&2; \
 		exit 1; }
@@ -41,9 +51,9 @@ help: ## Alle verfügbaren Befehle anzeigen
 	@echo
 	@echo "Please use \`make <$(THEME_COLOR_GROUP)target$(RESET)>' where <target> is one of"
 	@echo
-	@echo "Project: $(THEME_COLOR_GROUP)$(PROJECT_NAME)$(RESET)"
+	@echo "Project: $(THEME_COLOR_GROUP)$${PROJECT_NAME}$(RESET)"
 	@echo
-	@grep -hE '^(##@|[a-zA-Z0-9_-]+:.*?## )' $(MAKEFILE_LIST) | \
+	@set -o pipefail; grep -hE '^(##@|[a-zA-Z0-9_-]+:.*?## )' "$${HELP_FILE}" | \
 	  awk 'BEGIN {FS = ":.*## "}; \
 	    /^##@/ { printf "\n$(THEME_INDENT_GROUP)$(THEME_COLOR_GROUP)%s$(RESET)\n", substr($$0, 4); next }; \
 	    /## /  { desc = $$2; sub(/ — Maintainer$$/, " $(MAINTAINER_MARK)", desc); \
@@ -53,9 +63,9 @@ help: ## Alle verfügbaren Befehle anzeigen
 .PHONY: info
 info: ## Umgebungsvariablen und Werkzeugversionen anzeigen
 	@echo
-	@echo "    $(YELLOW)PROJECT_NAME$(RESET)  = $(BLUE)$(PROJECT_NAME)$(RESET)"
-	@echo "    $(YELLOW)WORKSPACE$(RESET)     = $(BLUE)$(WORKSPACE)$(RESET)"
-	@echo "    $(YELLOW)BASH_LIBS$(RESET)     = $(BLUE)$(or $(BASH_LIBS),nicht gefunden)$(RESET)"
+	@echo "    $(YELLOW)PROJECT_NAME$(RESET)  = $(BLUE)$${PROJECT_NAME}$(RESET)"
+	@echo "    $(YELLOW)WORKSPACE$(RESET)     = $(BLUE)$${WORKSPACE}$(RESET)"
+	@echo "    $(YELLOW)BASH_LIBS$(RESET)     = $(BLUE)$${BASH_LIBS:-nicht gefunden}$(RESET)"
 	@echo "    $(YELLOW)ProjectTools$(RESET)  = $(BLUE)$(or $(PROJECTTOOLS_FOUND),nicht gefunden)$(RESET) (verlangt ab $(PROJECTTOOLS_MIN))"
 	@echo
 
@@ -84,7 +94,7 @@ hints: ## Nützliche Links und Hinweise anzeigen
 	@echo "$(THEME_INDENT_GROUP)$(THEME_COLOR_GROUP)Werkzeuge$(RESET)"
 	@$(call hint_row,ProjectTools,$(PROJECTTOOLS_INSTALL))
 	@$(call hint_row,BashLib (Maintainer),$(BASHLIB_INSTALL))
-	@$(call hint_row,Arbeitskopie,pipx install -e <Pfad>)
+	@$(call hint_row,Arbeitskopie,pipx install -e $${WORKSPACE_SQ})
 	@echo
 	@echo "$(THEME_INDENT_GROUP)$(THEME_COLOR_GROUP)Links$(RESET)"
 	@$(call hint_row,Repository,$(or $(REPO_URL),$(NO_REMOTE)))
@@ -117,7 +127,7 @@ require-tools:
 .PHONY: setup
 setup: ## Git-Hooks einrichten (pre-commit: make docs-check)
 	@git config core.hooksPath .githooks
-	@echo -e "  $(GREEN)✓$(RESET) $(PROJECT_NAME) ist eingerichtet"
+	@echo -e "  $(GREEN)✓$(RESET) $${PROJECT_NAME} ist eingerichtet"
 
 # Prüf-Targets richten nichts ein; setup ist der einzige Weg (worktree_setup).
 .PHONY: require-setup
