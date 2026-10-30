@@ -24,6 +24,7 @@ macros, MakeLib is a requirement (see [Including](#including)).
 - [Including](#including)
 - [Files](#files)
 - [Colours and themes](#colours-and-themes)
+- [Development](#development)
 - [License](#license)
 
 ## Requirements
@@ -111,6 +112,16 @@ the environment, for example `export MAKE_THEME=ocean`.
 With `NO_COLOR` set, or a terminal without `xterm` in `TERM`, there are no
 colours. Layout values, colour roles and the alignment with BashLib and
 ProjectTools are described in [docs/themes.md](docs/themes.md) (German).
+
+[↑ Overview](#overview)
+
+## Development
+
+`make setup` sets up a checkout; MakeLib needs nothing installed for it, but
+the target can be run any number of times. `make check` checks
+[example/Makefile](example/Makefile) against `src/` of this checkout: every
+theme, the output without colours, the colour table and the abort without
+MakeLib. The checks are in [scripts/check.sh](scripts/check.sh).
 
 [↑ Overview](#overview)
 
