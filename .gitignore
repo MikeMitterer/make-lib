@@ -1,2 +1,7 @@
 /_tickets/
 /.worktrees/
+
+# pip-Paket (pyproject.toml)
+*.egg-info/
+build/
+__pycache__/

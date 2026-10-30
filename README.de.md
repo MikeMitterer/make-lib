@@ -116,11 +116,8 @@ ProjectTools stehen in [docs/themes.md](docs/themes.md).
 
 ## Entwicklung
 
-`make setup` richtet einen Checkout ein; MakeLib braucht dafür nichts zu
-installieren, das Ziel ist aber beliebig oft aufrufbar. `make check` prüft
-[example/Makefile](example/Makefile) gegen `src/` dieses Checkouts: jedes
-Theme, die Ausgabe ohne Farben, die Farbtabelle und den Abbruch ohne MakeLib.
-Die Prüfungen stehen in [scripts/check.sh](scripts/check.sh).
+Einrichten eines Checkouts, Befehle, Prüfung und Release beschreibt
+[docs/development.md](docs/development.md).
 
 [↑ Übersicht](#übersicht)
 
