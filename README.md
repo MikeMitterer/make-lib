@@ -30,25 +30,44 @@ macros, MakeLib is a requirement (see [Including](#including)).
 ## Requirements
 
 - **GNU Make**, including version 3.81 that ships with macOS.
-- **`DEV_MAKE`** points to the `src` directory of this repository (see
-  [Installation](#installation)).
+- **pipx** for the installation, and Python 3.9 or newer.
+- **`DEV_MAKE`** points to the directory with `colours.mk` and `tools.mk`;
+  `makelib-path` prints it (see [Installation](#installation)).
 
 [↑ Overview](#overview)
 
 ## Installation
 
-```bash
-git clone https://github.com/MikeMitterer/make-lib.git ~/.local/share/make-lib
-```
-
-Then set `DEV_MAKE` permanently, for example in `~/.bashrc` or `~/.zshrc`:
+MakeLib is installed with pipx as a versioned package. `<release-tag>` is a
+tag from the [releases](https://github.com/MikeMitterer/make-lib/tags):
 
 ```bash
-export DEV_MAKE="$HOME/.local/share/make-lib/src"
+pipx install 'git+https://github.com/MikeMitterer/make-lib.git@<release-tag>'
 ```
 
-`DEV_MAKE` points to `src`, not to the repository itself. The location of the
-clone is up to you. Update with `git -C ~/.local/share/make-lib pull`.
+The command `makelib-path` prints the directory with `colours.mk` and
+`tools.mk`; `makelib-path --version` prints the installed version. Set
+`DEV_MAKE` from it, for example in `~/.bashrc` or `~/.zshrc`:
+
+```bash
+export DEV_MAKE="$(makelib-path)"
+```
+
+A Makefile can also determine the directory itself. Without an installation
+`DEV_MAKE` stays empty and `-include` skips the file:
+
+```make
+DEV_MAKE ?= $(shell makelib-path 2>/dev/null)
+-include $(DEV_MAKE)/colours.mk
+```
+
+If you work on MakeLib itself, install your working copy instead
+(`<path-to-make-lib>` is its folder); changes to the `.mk` files then take
+effect without reinstalling:
+
+```bash
+pipx install -e <path-to-make-lib>
+```
 
 [↑ Overview](#overview)
 
