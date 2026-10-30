@@ -1,0 +1,32 @@
+# MakeLib als pip-Paket: liefert die Make-Bibliotheken aus src/ und den Befehl
+# makelib-path, der ihr Verzeichnis ausgibt (fuer DEV_MAKE).
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mmit-makelib"
+version = "0.1.0"
+description = "Farben, Themes und Hilfezeilen für Makefiles"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.9"
+
+[project.urls]
+Homepage = "https://github.com/MikeMitterer/make-lib"
+
+[project.scripts]
+makelib-path = "makelib:main"
+
+# Welche Bibliotheken ins Paket kommen: alle src/*.mk, im Paket unter
+# makelib/lib. Eine editierbare Installation liest sie direkt aus src/.
+[tool.setuptools]
+packages = ["makelib", "makelib.lib"]
+include-package-data = false
+
+[tool.setuptools.package-dir]
+"" = "python"
+"makelib.lib" = "src"
+
+[tool.setuptools.package-data]
+"makelib.lib" = ["*.mk"]
