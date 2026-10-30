@@ -11,6 +11,9 @@ PROJECT_NAME := $(notdir $(WORKSPACE))
 # Anführungszeichen, wie ihn ein kopierter Befehl braucht.
 export WORKSPACE PROJECT_NAME
 export WORKSPACE_SQ := '$(subst ','\'',$(WORKSPACE))'
+# Die Hilfezeilen stehen nur in diesem Makefile. $(value …) liest MAKEFILE_LIST
+# unausgewertet: ein $(…) im Pfad (etwa bei make -f) liefe sonst in Make selbst.
+export HELP_FILE := $(firstword $(value MAKEFILE_LIST))
 
 # Release-Tags der pipx-Werkzeuge (makefile-conventions, Gemeinsame Werkzeuge)
 include .dev-tools.conf.sh
@@ -50,7 +53,7 @@ help: ## Alle verfügbaren Befehle anzeigen
 	@echo
 	@echo "Project: $(THEME_COLOR_GROUP)$${PROJECT_NAME}$(RESET)"
 	@echo
-	@grep -hE '^(##@|[a-zA-Z0-9_-]+:.*?## )' $(MAKEFILE_LIST) | \
+	@set -o pipefail; grep -hE '^(##@|[a-zA-Z0-9_-]+:.*?## )' "$${HELP_FILE}" | \
 	  awk 'BEGIN {FS = ":.*## "}; \
 	    /^##@/ { printf "\n$(THEME_INDENT_GROUP)$(THEME_COLOR_GROUP)%s$(RESET)\n", substr($$0, 4); next }; \
 	    /## /  { desc = $$2; sub(/ — Maintainer$$/, " $(MAINTAINER_MARK)", desc); \
